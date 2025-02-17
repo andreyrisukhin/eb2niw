@@ -6,17 +6,21 @@ This repository contains a Python script, and its utilities, to
 
 ## Detailed Plan
 
+```
 project/
 ├── src/
-│   ├── pdf_processor.py      # PDF reading and writing
-│   ├── text_analyzer.py      # NLP and claim extraction
-│   ├── web_scraper.py        # Evidence gathering (Recall-like, get everything relevant)
-│   ├── evidence_validator.py # Validation and ranking (Precision-like, keep only the strongest evidence)
-│   ├── report_generator.py   # Output PDF creation
-│   └── main.py              # Script orchestration
+│   ├── pipeline_steps/
+│   │   ├── step1_pdf_processor.py      # PDF reading and writing
+│   │   ├── step2_extract_claims.py     # NLP and claim extraction
+│   │   ├── step3_evidence_gather.py    # Evidence gathering (Recall-like, get everything relevant)
+│   │   ├── step4_evidence_validator.py # Validation and ranking (Precision-like, keep only the strongest evidence)
+│   │   └── step5_report_generator.py   # Output PDF creation
+│   └── main.py                         # Script orchestration
+├── output/                             # Output directory for processed statements
 ├── tests/
 ├── requirements.txt
 └── README.md
+```
 
 ### Next Up (TODOs)
 * Checkpoint pickup from a pipeline step (avoid reusing APIs etc)
