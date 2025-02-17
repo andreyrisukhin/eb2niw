@@ -18,12 +18,16 @@ project/
 ├── requirements.txt
 └── README.md
 
+### Next Up (TODOs)
+* Checkpoint pickup from a pipeline step (avoid reusing APIs etc)
+* Better Step 2 claim extraction (try with Anthropic/ChatGPT)
+
+
 
 ### Assumptions and Design Decisions
 * Modules for each step in the pipeline - expect pipeline to be linear, one-directional.
 * Save intermediate state between modules, allowing recovery and intermediate validation between steps. (save each personal statement & state to its own folder; gives staleness)
 * JSON format for intermediate state.
-
 
 
 
@@ -59,6 +63,8 @@ project/
   * Input PDFs will be scanned for malware before processing
 
 
+### Setup
+* Activate environment with .\venv\Scripts\activate.bat
 
 
 # IO References
