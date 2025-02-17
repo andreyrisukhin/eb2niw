@@ -22,49 +22,24 @@ project/
 * Checkpoint pickup from a pipeline step (avoid reusing APIs etc)
 * Better Step 2 claim extraction (try with Anthropic/ChatGPT)
 
-
-
 ### Assumptions and Design Decisions
+P0 - It Works
 * Modules for each step in the pipeline - expect pipeline to be linear, one-directional.
-* Save intermediate state between modules, allowing recovery and intermediate validation between steps. (save each personal statement & state to its own folder; gives staleness)
-* JSON format for intermediate state.
+* Save intermediate state (JSON) between modules, allowing recovery and intermediate validation between steps. (save each personal statement & state to its own folder; gives staleness)
+* Text Matching
 
+P1 - QoL
+* Each module will implement input validation and clear error messaging
+* Failed processing attempts will be logged with detailed context
+* System will gracefully handle network issues during web scraping
+* Each piece of evidence will be tagged with source, timestamp, and relevance score
 
-
-
-* Data Processing & Storage:
-  * Each personal statement will be processed in its own isolated workspace
-  * All intermediate data will be stored in JSON format for easy inspection and debugging
-  * PDF text extraction will preserve formatting metadata where possible
-  
-* Error Handling & Validation:
-  * Each module will implement input validation and clear error messaging
-  * Failed processing attempts will be logged with detailed context
-  * System will gracefully handle network issues during web scraping
-  
-* Evidence Collection:
-  * Web scraping will respect robots.txt and implement rate limiting
-  * Evidence will be cached locally to avoid repeated requests
-  * Each piece of evidence will be tagged with source, timestamp, and relevance score
-  
-* Output Generation:
-  * PDF output will follow a consistent, professional template
-  * Evidence will be organized by relevance and type
-  * All sources will be properly cited with timestamps and URLs
-  
-* Performance Considerations:
-  * Batch processing capability for multiple statements
-  * Parallel processing where appropriate (especially for web scraping)
-  * Resource-intensive operations will be monitored and optimized
-
-* Security & Privacy:
-  * Personal/sensitive information will be handled according to privacy best practices
-  * Web scraping credentials and API keys will be managed securely
-  * Input PDFs will be scanned for malware before processing
+P2 - Efficiency
+* Batch processing 
 
 
 ### Setup
-* Activate environment with .\venv\Scripts\activate.bat
+* Use requirements.txt to create an environment; spaCy package requres special install per their website: https://pypi.org/project/spacy/
 
 
 # IO References
