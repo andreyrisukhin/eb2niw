@@ -35,6 +35,7 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
         raw_text = extract_text_from_pdf(input_pdf_path)
         step1_state = {"raw_text": raw_text}
         save_state(step1_state, output_dir, "step1_extract_raw_text")
+        print(f"Saving state for step 1: {output_dir}")
         if not raw_text:
             raise Exception("Failed to extract text from PDF")
     else:
@@ -48,6 +49,7 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
         claims = extract_claims_combined(raw_text)
         step2_state = {"claims": claims}
         save_state(step2_state, output_dir, "step2_v2_extract_claims")
+        print(f"Saving state for step 2: {output_dir}")
         if not claims:
             raise Exception("No claims identified in text")
     else:
@@ -91,6 +93,7 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
 
         
         save_state(step3_state, output_dir, "step3_evidence")
+        print(f"Saving state for step 3: {output_dir}")
         if not evidence:
             raise Exception("No evidence found for claims")
     else:
@@ -119,6 +122,7 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
         report_text = generate_evidence_report(claims, validated_evidence)
         step5_state = {"report_text": report_text}
         save_state(step5_state, output_dir, "step5_report")
+        print(f"Saving state for step 5: {output_dir}")
         if not report_text:
             raise Exception("Failed to generate report text")
     else:
@@ -131,6 +135,7 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
     if not os.path.exists(os.path.join(output_dir, "step6_pdf_state.json")):
         create_formatted_pdf(report_text, os.path.join(output_dir, "final_report.pdf"))
         output_pdf = os.path.join(output_dir, "final_report.pdf")
+        print(f"Saving state for step 6: {output_dir}")
         if not output_pdf:
             raise Exception("Failed to create final PDF")
     else:
