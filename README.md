@@ -16,9 +16,9 @@ project/
 │   │   ├── step4_evidence_validator.py # Validation and ranking (Precision-like, keep only the strongest evidence)
 │   │   └── step5_report_generator.py   # Output PDF creation
 │   └── main.py                         # Script orchestration
+│   └── requirements.txt
 ├── output/                             # Output directory for processed statements
-├── tests/
-├── requirements.txt
+├── samples/                            # Example assignment files
 └── README.md
 ```
 
