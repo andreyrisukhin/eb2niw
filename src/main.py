@@ -4,7 +4,7 @@ from datetime import datetime
 
 from pipeline_steps.step1_pdf_processor import extract_text_from_pdf, create_formatted_pdf
 from pipeline_steps.step2_extract_claims import extract_claims_combined
-from pipeline_steps.step3_evidence_gather import gather_evidence_for_claim
+from pipeline_steps.step3_evidence_gather import gather_evidence_all_claims
 from pipeline_steps.step4_evidence_validator import validate_and_rank_evidence
 from pipeline_steps.step5_report_generator import generate_evidence_report
 
@@ -58,7 +58,7 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
 
     # Step 3: Gather evidence for claims
     if not os.path.exists(os.path.join(output_dir, "step3_evidence_state.json")):
-        evidence = gather_evidence_for_claim(claims)
+        evidence = gather_evidence_all_claims(claims)
         step3_state = {"evidence": evidence}
         save_state(step3_state, output_dir, "step3_evidence")
         if not evidence:

@@ -13,6 +13,25 @@ from scholarly import scholarly # Google Scholar API
 import anthropic
 # from perplexity import Perplexity # TODO add perplexity API key
 
+
+"""
+* Here are a few tips for where evidence of national importance can be sourced from:
+    1.	Media articles and reports from reputable outlets that highlight the broader impact of your work or its alignment with national interests
+    2.	Evidence showing your work aligns with U.S. government priorities, such as federal climate action initiatives or energy independence goals - Executive orders or government press releases
+    3.	Documentation demonstrating your work's potential to employ U.S. workers or have significant economic impact, particularly in economically depressed areas
+    4.	Evidence of your work's potential to produce significant economic impact or other substantial positive economic effects
+    5.	Documentation showing your endeavor has national or global implications within a particular field, such as improved manufacturing processes or medical advances
+    6.	Evidence of media coverage in national or reputable regional outlets, indicating broader interest in your work
+    7.	Comparative analysis demonstrating how your work stands out in your field, emphasizing its unique national importance
+    8.	Documentation showing the scalability of your work, indicating its potential for broader impact beyond its current scope
+
+Compare against govt priorities text (in context; docs added/removed as priorities change especially with current administration)
+"""
+
+
+
+
+
 def gather_evidence_for_claim(claim: Tuple[str, str, str]) -> Dict:
     """
     Gather supporting evidence for a given claim from multiple sources.
@@ -177,7 +196,7 @@ def get_expert_validation(claim: str, evidence: List[Dict]) -> str:
         print(f"Claude API error: {str(e)}")
         return None
 
-def gather_evidence(claims: List[Tuple[str, str, str]]) -> List[Dict]:
+def gather_evidence_all_claims(claims: List[Tuple[str, str, str]]) -> List[Dict]:
     """
     Gather evidence for a list of claims.
     
@@ -188,7 +207,6 @@ def gather_evidence(claims: List[Tuple[str, str, str]]) -> List[Dict]:
         List of evidence dictionaries for each claim
     """
     evidence_collection = []
-    
     for claim in claims:
         evidence = gather_evidence_for_claim(claim)
         evidence_collection.append(evidence)
