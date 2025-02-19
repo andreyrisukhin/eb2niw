@@ -2,7 +2,7 @@
 This repository contains a Python script, and its utilities, to 
 1) Process an anonymized personal statement, in pdf format.
 2) Collect evidence across the internet.
-3) For each personal statement, your python script should output well formatted pdf documents listing all supporting evidence and arguments for eligibility criterion #1 listed above.
+3) Output well formatted pdf documents listing all supporting evidence and arguments for eligibility criterion #1 listed above.
 
 ## Detailed Plan
 
@@ -22,28 +22,14 @@ project/
 └── README.md
 ```
 
-### Next Up (TODOs)
-* Better Step 2 claim extraction (try with Anthropic/ChatGPT)
-
 ### Assumptions and Design Decisions
 P0 - It Works
 * Modules for each step in the pipeline - expect pipeline to be linear, one-directional.
 * Save intermediate state (JSON) between modules, allowing recovery and intermediate validation between steps. (save each personal statement & state to its own folder; gives staleness)
-* Text Matching does not work, call LLM APIs instead to ID claims.
+* Text Matching does not work, call LLM APIs instead to identify claims.
 * Trustworthy sources for citations.
     * Claims relating to "endeavor has national interest" benefit from web search.
     * Claims related to background/previous experience, leave placeholder for applicant to fill in with evidence. This is real business flow.
-* Here are a few tips for where evidence of national importance can be sourced from:
-    1.	Media articles and reports from reputable outlets that highlight the broader impact of your work or its alignment with national interests
-    2.	Evidence showing your work aligns with U.S. government priorities, such as federal climate action initiatives or energy independence goals - Executive orders or government press releases
-    3.	Documentation demonstrating your work's potential to employ U.S. workers or have significant economic impact, particularly in economically depressed areas
-    4.	Evidence of your work's potential to produce significant economic impact or other substantial positive economic effects
-    5.	Documentation showing your endeavor has national or global implications within a particular field, such as improved manufacturing processes or medical advances
-    6.	Evidence of media coverage in national or reputable regional outlets, indicating broader interest in your work
-    7.	Comparative analysis demonstrating how your work stands out in your field, emphasizing its unique national importance
-    8.	Documentation showing the scalability of your work, indicating its potential for broader impact beyond its current scope
-
-Compare against govt priorities text (in context; docs added/removed as priorities change especially with current administration)
 
 P1 - QoL
 * Each module will implement input validation and clear error messaging
@@ -51,13 +37,18 @@ P1 - QoL
 * System will gracefully handle network issues during web scraping
 * Each piece of evidence will be tagged with source, timestamp, and relevance score
 
-P2 - Efficiency
-* Batch processing 
+Product
+* Nicer PDF document output template
+* More sources searched in Step 3
+* Less "AI-generated" sounding report, with more specific details (prompting task)
 
+P2 - Efficiency
+* Batch processing
+* Multithreading
 
 ### Setup
 * Use requirements.txt to create an environment; spaCy package requres special install per their website: https://pypi.org/project/spacy/
-
+* Run `python main.py ../samples/anonymized-2.pdf` to create the directory, containing intermediate state and final pdf, for anonymized-2.pdf
 
 # IO References
 
