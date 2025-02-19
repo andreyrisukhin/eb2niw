@@ -163,10 +163,7 @@ def save_state(state_dict, output_dir, step_name):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python main.py <path_to_personal_statement.pdf>") # TODO: support CLI, ex: [--continue-from <step_name>] 
-        # print("\nOptional arguments:")
-        # print("  --continue-from    Continue pipeline from a specific step (step1_extract, step2_analyze, etc)")
-        # print("  --checkpoint-dir   Directory containing checkpoint files to resume from")
+        print("Usage: python main.py <path_to_personal_statement.pdf>") # TODO: support CLI, ex: [--continue-from <step_name>] [--checkpoint-dir <dir>]
         sys.exit(1)
         
     input_pdf = sys.argv[1]
