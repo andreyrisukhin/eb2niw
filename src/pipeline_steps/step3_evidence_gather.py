@@ -39,11 +39,6 @@ When a claim mentions advancements in a field or claims to be on the cutting edg
     Use Perplexity, Google Search to find evidence.
 """
 
-"""
-Write a function that processes a claim. If the claim is about the subject's background, leave a placeholder for the applicant to fill in with evidence.
-
-If the claim is about national importance, find evidence to support it. Use the comment as a guide.
-"""
 
 # From https://www.state.gov/priorities-and-mission-of-the-second-trump-administrations-department-of-state/
 usa_administration_priorities = """
@@ -154,6 +149,27 @@ def process_claim_by_type(claim: Tuple[str, str, str]) -> List[Dict]:
             
     return []
 
+def gather_evidence_all_claims(claims: List[Tuple[str, str, str]]) -> List[Dict]:
+    """
+    Gather evidence for a list of claims.
+    
+    Args:
+        claims: List of claim tuples (claim_text, claim_type, initial_evidence)
+        
+    Returns:
+        List of evidence dictionaries for each claim
+    """
+    evidence_collection = []
+    for claim in claims:
+        evidence = process_claim_by_type(claim)
+        evidence_collection.append(evidence)
+        
+    return evidence_collection
+
+
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# TODO Below are methods for gathering evidence from various sources. These are not used in the current implementation.
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def gather_evidence_for_claim(claim: Tuple[str, str, str]) -> Dict:
     """
@@ -189,24 +205,24 @@ def gather_evidence_for_claim(claim: Tuple[str, str, str]) -> Dict:
     
     return evidence
 
-# def search_perplexity(query: str) -> List[Dict]:
-#     """Search Perplexity API for evidence."""
-#     client = Perplexity(api_key=os.getenv('PERPLEXITY_API_KEY'))
-#     results = []
+def search_perplexity(query: str) -> List[Dict]:
+    """Search Perplexity API for evidence."""
+    client = Perplexity(api_key=os.getenv('PERPLEXITY_API_KEY'))
+    results = []
     
-#     try:
-#         response = client.search(query)
-#         for result in response['results']:
-#             results.append({
-#                 'source': 'perplexity',
-#                 'title': result.get('title'),
-#                 'snippet': result.get('snippet'),
-#                 'url': result.get('url')
-#             })
-#     except Exception as e:
-#         print(f"Perplexity search error: {str(e)}")
+    try:
+        response = client.search(query)
+        for result in response['results']:
+            results.append({
+                'source': 'perplexity',
+                'title': result.get('title'),
+                'snippet': result.get('snippet'),
+                'url': result.get('url')
+            })
+    except Exception as e:
+        print(f"Perplexity search error: {str(e)}")
         
-#     return results
+    return results
 
 def search_you_dot_com(query: str) -> List[Dict]:
     """Search You.com API for evidence."""
@@ -318,21 +334,3 @@ def get_expert_validation(claim: str, evidence: List[Dict]) -> str:
     except Exception as e:
         print(f"Claude API error: {str(e)}")
         return None
-
-def gather_evidence_all_claims(claims: List[Tuple[str, str, str]]) -> List[Dict]:
-    """
-    Gather evidence for a list of claims.
-    
-    Args:
-        claims: List of claim tuples (claim_text, claim_type, initial_evidence)
-        
-    Returns:
-        List of evidence dictionaries for each claim
-    """
-    evidence_collection = []
-    for claim in claims:
-        # evidence = gather_evidence_for_claim(claim)
-        evidence = process_claim_by_type(claim)
-        evidence_collection.append(evidence)
-        
-    return evidence_collection

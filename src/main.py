@@ -149,11 +149,6 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
     print(f"Final report saved as {output_pdf}")
     return True, output_dir, None
 
-    # except Exception as e:
-    #     error_message = f"Error processing personal statement: {str(e)}"
-    #     print(error_message)
-    #     return False, output_dir, error_message
-
 def save_state(state_dict, output_dir, step_name):
     """
     Save the state of a pipeline step to JSON for debugging and rerunning.
@@ -179,7 +174,7 @@ def main():
 
     # Load environment variables from .env file in root directory
     load_dotenv()
-    process_personal_statement(input_pdf) #, continue_from, checkpoint_dir)
+    process_personal_statement(input_pdf)
 
 if __name__ == "__main__":
     main()
