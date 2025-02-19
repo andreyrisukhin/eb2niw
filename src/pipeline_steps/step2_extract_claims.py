@@ -2,8 +2,9 @@
 Step 2: Extract claims from the text.
 """
 
-import spacy
+# import spacy
 from typing import List, Dict, Tuple
+import os
 
 def extract_claims_spacy(text: str) -> List[Tuple[str, str, str]]:
     """
@@ -74,6 +75,7 @@ def extract_claims_anthropic(text: str) -> List[Tuple[str, str, str]]:
         return []
 
     # Initialize Anthropic client
+    anthropic.api_key = os.getenv("ANTHROPIC_API_KEY")
     client = anthropic.Anthropic()
     
     # Define specific prompts to assess different types of claims
@@ -197,8 +199,8 @@ def extract_claims_combined(text: str) -> List[Tuple[str, str, str]]:
         List[Tuple[str, str, str]]: Combined and deduplicated list of claims
     """
     # Get claims from both methods
-    spacy_claims = extract_claims_spacy(text)
-    # anthropic_claims = extract_claims_anthropic(text) # TODO Optimize token cost by not passing text already marked as a claim
+    # spacy_claims = extract_claims_spacy(text)
+    anthropic_claims = extract_claims_anthropic(text) # If another method is added, optimize token cost by not passing text already marked as a claim
     
     # # Combine claims, removing duplicates
     # all_claims = spacy_claims + anthropic_claims
@@ -220,6 +222,6 @@ def extract_claims_combined(text: str) -> List[Tuple[str, str, str]]:
     #         unique_claims.append(claim)
     
     # return unique_claims
-    return spacy_claims
+    return anthropic_claims
 
 

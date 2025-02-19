@@ -23,7 +23,6 @@ project/
 ```
 
 ### Next Up (TODOs)
-* Checkpoint pickup from a pipeline step (avoid reusing APIs etc)
 * Better Step 2 claim extraction (try with Anthropic/ChatGPT)
 
 ### Assumptions and Design Decisions

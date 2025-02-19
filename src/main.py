@@ -10,6 +10,9 @@ from pipeline_steps.step5_report_generator import generate_evidence_report
 
 import json
 
+# Load API keys from .env file
+from dotenv import load_dotenv
+
 def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_dir=None):
     """
     Process a single personal statement PDF through the evidence gathering pipeline.
@@ -22,39 +25,34 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
     Returns:
         tuple: (success: bool, output_dir: str, error_message: str or None)
     """
-    # Create output directory named with timestamp
-    # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    # output_dir = os.path.join("../output", f"statement_{timestamp}")
+    # Create output directory 
     filename_no_ext = input_pdf_path.split("/")[-1].split(".")[0]
     output_dir = os.path.join("../output/", filename_no_ext)
     os.makedirs(output_dir, exist_ok=True)
 
-    # Check if dir contains a prior step file; if so, continue from the latest step
-
-
     # Step 1: Extract text from PDF
-    if not os.path.exists(os.path.join(output_dir, "step1_extract_state.json")):
+    if not os.path.exists(os.path.join(output_dir, "step1_raw_text_state.json")):
         raw_text = extract_text_from_pdf(input_pdf_path)
         step1_state = {"raw_text": raw_text}
-        save_state(step1_state, output_dir, "step1_extract")
+        save_state(step1_state, output_dir, "step1_extract_raw_text")
         if not raw_text:
             raise Exception("Failed to extract text from PDF")
     else:
         print(f"Resuming from step 1: {output_dir}")
-        with open(os.path.join(output_dir, "step1_extract_state.json"), "r") as f:
+        with open(os.path.join(output_dir, "step1_raw_text_state.json"), "r") as f:
             step1_state = json.load(f)
             raw_text = step1_state["raw_text"]
 
     # Step 2: Analyze text and extract claims
-    if not os.path.exists(os.path.join(output_dir, "step2_analyze_state.json")):
+    if not os.path.exists(os.path.join(output_dir, "step2_extract_claims_state.json")):
         claims = extract_claims_combined(raw_text)
         step2_state = {"claims": claims}
-        save_state(step2_state, output_dir, "step2_analyze")
+        save_state(step2_state, output_dir, "step2_extract_claims")
         if not claims:
             raise Exception("No claims identified in text")
     else:
         print(f"Resuming from step 2: {output_dir}")
-        with open(os.path.join(output_dir, "step2_analyze_state.json"), "r") as f:
+        with open(os.path.join(output_dir, "step2_extract_claims_state.json"), "r") as f:
             step2_state = json.load(f)
             claims = step2_state["claims"]
 
@@ -153,6 +151,8 @@ def main():
     #     elif arg.startswith("--checkpoint-dir="):
     #         checkpoint_dir = arg.split("=")[1]
 
+    # Load environment variables from .env file in root directory
+    load_dotenv()
     process_personal_statement(input_pdf) #, continue_from, checkpoint_dir)
 
 if __name__ == "__main__":
