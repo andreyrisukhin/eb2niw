@@ -163,7 +163,7 @@ def save_state(state_dict, output_dir, step_name):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python main.py <path_to_personal_statement.pdf> [--continue-from <step_name>] [--checkpoint-dir <dir>]")
+        print("Usage: python main.py <path_to_personal_statement.pdf>") # TODO: support CLI, ex: [--continue-from <step_name>] 
         # print("\nOptional arguments:")
         # print("  --continue-from    Continue pipeline from a specific step (step1_extract, step2_analyze, etc)")
         # print("  --checkpoint-dir   Directory containing checkpoint files to resume from")
@@ -173,14 +173,6 @@ def main():
     if not os.path.exists(input_pdf):
         print(f"Error: File {input_pdf} not found")
         sys.exit(1)
-
-    # continue_from = None
-    # checkpoint_dir = None
-    # for arg in sys.argv[2:]:
-    #     if arg.startswith("--continue-from="):
-    #         continue_from = arg.split("=")[1]
-    #     elif arg.startswith("--checkpoint-dir="):
-    #         checkpoint_dir = arg.split("=")[1]
 
     # Load environment variables from .env file in root directory
     load_dotenv()
