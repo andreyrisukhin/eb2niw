@@ -43,6 +43,7 @@ P0 - It Works
     7.	Comparative analysis demonstrating how your work stands out in your field, emphasizing its unique national importance
     8.	Documentation showing the scalability of your work, indicating its potential for broader impact beyond its current scope
 
+Compare against govt priorities text (in context; docs added/removed as priorities change especially with current administration)
 
 P1 - QoL
 * Each module will implement input validation and clear error messaging

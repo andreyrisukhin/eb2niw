@@ -44,15 +44,15 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
             raw_text = step1_state["raw_text"]
 
     # Step 2: Analyze text and extract claims
-    if not os.path.exists(os.path.join(output_dir, "step2_extract_claims_state.json")):
+    if not os.path.exists(os.path.join(output_dir, "step2_v2_extract_claims_state.json")):
         claims = extract_claims_combined(raw_text)
         step2_state = {"claims": claims}
-        save_state(step2_state, output_dir, "step2_extract_claims")
+        save_state(step2_state, output_dir, "step2_v2_extract_claims")
         if not claims:
             raise Exception("No claims identified in text")
     else:
         print(f"Resuming from step 2: {output_dir}")
-        with open(os.path.join(output_dir, "step2_extract_claims_state.json"), "r") as f:
+        with open(os.path.join(output_dir, "step2_v2_extract_claims_state.json"), "r") as f:
             step2_state = json.load(f)
             claims = step2_state["claims"]
 

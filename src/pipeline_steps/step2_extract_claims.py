@@ -150,13 +150,37 @@ def extract_claims_anthropic(text: str) -> List[Tuple[str, str, str]]:
     Only extract claims that are explicitly about merit or national importance.
     Text to analyze: {text}"""
 
+    prompt_2 = f"""You are an expert at extracting claims from an immigration petition for an EB-2 NIW (National Interest Waiver) visa.
+
+    You will be given a text and you will need to extract every claim that is either a:
+        (1) Claim about the subject's background and previous experiences
+        (2) Claim about the national importance of the subject's work
+    
+    When deciding whether a sentence is a claim about the subject's background, consider the following:
+        - Does the sentence mention the subject's education, work experience, publications, patents, awards, or other background experiences 
+        or accomplishments that are relevant to their eligibility for an EB-2 NIW visa?
+
+    When deciding whether a sentence is a claim about the national importance of the subject's work, consider the following:
+        - Does the sentence describe the impact of the work on the U.S. or its citizens?
+        - Does the sentence describe the potential for the work to have a significant economic, scientific, or technological impact?
+        - Does the sentence describe the potential for the work to have a significant impact on national security?
+        - Does the sentence compare the subject's work to other works or achievements in the same field?
+        - Does the sentence mention media articles or reports from reputable outlets that highlight the broader impact of the work or alignment with U.S. government priorities?
+
+    Format each claim as: CLAIM TYPE: <background/importance>
+    CLAIM TEXT: <exact quote>
+    EVIDENCE: <supporting text>
+
+    Only extract claims that are explicitly about the subject's background or their work's national importance.
+    Text to analyze: {text}"""
+
     # Get response from Claude
     response = client.messages.create(
         model="claude-3-opus-20240229",
         max_tokens=1000,
         temperature=0,
         system="You are a specialized claim extractor focused on identifying claims about national importance and substantial merit in immigration contexts.",
-        messages=[{"role": "user", "content": prompt}]
+        messages=[{"role": "user", "content": prompt_2}]
     )
 
     # Parse response into claims
@@ -168,8 +192,8 @@ def extract_claims_anthropic(text: str) -> List[Tuple[str, str, str]]:
         if line.startswith('CLAIM TYPE:'):
             if current_claim:
                 claims.append((
-                    current_claim['text'],
                     current_claim['type'],
+                    current_claim['text'],
                     current_claim['evidence']
                 ))
             current_claim = {'type': line.split(':')[1].strip().lower()}
@@ -181,8 +205,8 @@ def extract_claims_anthropic(text: str) -> List[Tuple[str, str, str]]:
     # Add final claim if exists
     if current_claim:
         claims.append((
-            current_claim['text'],
             current_claim['type'],
+            current_claim['text'],
             current_claim['evidence']
         ))
 
