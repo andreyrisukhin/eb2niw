@@ -60,6 +60,36 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
     if not os.path.exists(os.path.join(output_dir, "step3_evidence_state.json")):
         evidence = gather_evidence_all_claims(claims)
         step3_state = {"evidence": evidence}
+
+        # Save raw state to txt for debugging
+        with open(os.path.join(output_dir, "step3_evidence_debug.txt"), "w") as f:
+            f.write(str(evidence))
+
+        # Try to identify non-serializable objects
+        def check_serializable(obj):
+            try:
+                json.dumps(obj)
+                return True
+            except TypeError as e:
+                return False
+
+        # Convert evidence to serializable format
+        serializable_evidence = []
+        for ev in evidence:
+            if isinstance(ev, dict):
+                clean_ev = {}
+                for k,v in ev.items():
+                    if check_serializable(v):
+                        clean_ev[k] = v
+                    else:
+                        clean_ev[k] = str(v)  # Convert non-serializable objects to strings
+                serializable_evidence.append(clean_ev)
+            else:
+                serializable_evidence.append(str(ev))
+
+        step3_state = {"evidence": serializable_evidence}
+
+        
         save_state(step3_state, output_dir, "step3_evidence")
         if not evidence:
             raise Exception("No evidence found for claims")
