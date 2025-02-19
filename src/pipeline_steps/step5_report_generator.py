@@ -2,28 +2,26 @@
 Step 5: Generate a well-formatted PDF document listing all supporting evidence and arguments for eligibility criterion #1.
 """
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from pipeline_steps.step1_pdf_processor import create_formatted_pdf
 import anthropic
 import os
 
-def generate_evidence_report(applicant_info: Dict, validated_evidence: List[Dict], output_path: str, use_anthropic: bool = False):
+def generate_evidence_report(claims: List, validated_evidence: List):
     """
     Generate a well-formatted PDF report documenting evidence for NIW eligibility criterion #1.
     
     Args:
-        applicant_info: Dictionary containing applicant details (name, field, etc.)
         validated_evidence: List of validated and categorized evidence 
-        output_path: Path to save the output PDF report
-        use_anthropic: Whether to use Anthropic's API for report generation
+        # TODO: applicant_info: Dictionary containing applicant details (name, field, etc.)
     """
+    use_anthropic = True
     if use_anthropic:
-        report_content = _generate_report_with_anthropic(applicant_info, validated_evidence)
+        report_content = _generate_report_with_anthropic(claims, validated_evidence)
     else:
         report_content = _generate_report_template(applicant_info, validated_evidence)
         
-    # Generate PDF
-    create_formatted_pdf(report_content, output_path)
+    return report_content
 
 def _generate_report_template(applicant_info: Dict, validated_evidence: List[Dict]) -> str:
     """Generate report content using template approach"""
@@ -83,45 +81,51 @@ def _generate_report_template(applicant_info: Dict, validated_evidence: List[Dic
     
     return '\n\n'.join(report_sections)
 
-def _generate_report_with_anthropic(applicant_info: Dict, validated_evidence: List[Dict]) -> str:
-    """Generate report content using Anthropic's API"""
+
+# TODO update this to support the profile of the applicant (first name, last name, Dr. or Prof. if relevant, ...)
+def _generate_report_with_anthropic(claims: List[Tuple[str, str, str]], evidence_list: List[str]) -> str:
+    """
+    Generate report content using Anthropic's API by synthesizing claims and evidence.
+    
+    Args:
+        claims: List of (claim_type, claim_text, claim_explanation) tuples from step 2
+        evidence_list: List of evidence strings from step 3
+    """
     client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
     
-    # Prepare evidence summary for prompt
+    # Group claims by type
+    claims_by_type = {}
+    for claim_type, claim_text, explanation in claims:
+        if claim_type not in claims_by_type:
+            claims_by_type[claim_type] = []
+        claims_by_type[claim_type].append((claim_text, explanation))
+
+    # Match evidence to claims where possible
     evidence_summary = []
-    for evidence in validated_evidence:
-        evidence_summary.append(f"Category: {evidence['category']}")
-        evidence_summary.append(f"Content: {evidence['content']}")
-        if evidence.get('source'):
-            evidence_summary.append(f"Source: {evidence['source']}")
-        evidence_summary.append("---")
+    for i, (claim_type, claim_group) in enumerate(claims_by_type.items()):
+        evidence_summary.append(f"\nClaim Type: {claim_type}")
+        for claim_text, explanation in claim_group:
+            evidence_summary.append(f"\nClaim: {claim_text}")
+            evidence_summary.append(f"Context: {explanation}")
+            if i < len(evidence_list):
+                evidence_summary.append(f"Supporting Evidence: {evidence_list[i]}")
     
     prompt = f"""
-    Generate a formal report section demonstrating that Dr. {applicant_info['name']}'s work in {applicant_info['field']} 
-    has substantial merit and national importance for the United States. Use the following evidence and maintain a formal,
-    academic tone:
+    Generate a formal 2-3 paragraph report synthesizing the following claims and evidence. 
+    Each paragraph should address a key claim and its supporting evidence.
+    Maintain a formal, academic tone and focus on demonstrating substantial merit and national importance.
 
-    Applicant Details:
-    Name: {applicant_info['name']}
-    Field: {applicant_info['field']}
-    Endeavor: {applicant_info['endeavor_description']}
-    Applications: {', '.join(applicant_info['applications'])}
-
-    Evidence:
+    Claims and Evidence:
     {chr(10).join(evidence_summary)}
 
-    The report should follow this structure:
-    1. Overview of the endeavor
-    2. Discussion of field's substantial merit
-    3. Market and government recognition
-    4. Specific benefits to the United States
-    5. Expert testimonials
+    Focus on synthesizing the strongest evidence that validates the original claims made.
+    Avoid speculating beyond what is directly supported by the evidence provided.
     """ # char 10 is newline
 
     response = client.messages.create(
         model="claude-3-opus-20240229",
-        max_tokens=2000,
-        temperature=0.7,
+        max_tokens=1000,
+        temperature=0.3,
         messages=[{"role": "user", "content": prompt}]
     )
     

@@ -112,6 +112,7 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
     #     with open(os.path.join(output_dir, "step4_validate_state.json"), "r") as f:
     #         step4_state = json.load(f)
     #         validated_evidence = step4_state["validated_evidence"]
+    validated_evidence = evidence
 
     # Step 5: Generate report text
     if not os.path.exists(os.path.join(output_dir, "step5_report_state.json")):
@@ -128,16 +129,16 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
     
     # Step 6: Create final PDF  
     if not os.path.exists(os.path.join(output_dir, "step6_pdf_state.json")):
-        output_pdf = create_formatted_pdf(report_text)
-        step6_state = {"output_pdf": output_pdf}
-        save_state(step6_state, output_dir, "step6_pdf")
+        create_formatted_pdf(report_text, os.path.join(output_dir, "final_report.pdf"))
+        output_pdf = os.path.join(output_dir, "final_report.pdf")
         if not output_pdf:
             raise Exception("Failed to create final PDF")
     else:
         print(f"Resuming from step 6: {output_dir}")
-        with open(os.path.join(output_dir, "step6_pdf_state.json"), "r") as f:
-            step6_state = json.load(f)
-            output_pdf = step6_state["output_pdf"]
+        # Just check that the PDF exists since we don't need to process it further
+        output_pdf = os.path.join(output_dir, "final_report.pdf")
+        if not os.path.exists(output_pdf):
+            raise Exception("Final PDF not found")
 
     print(f"Processing complete. All outputs saved to {output_dir}")
     print(f"Final report saved as {output_pdf}")
