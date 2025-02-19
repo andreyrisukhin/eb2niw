@@ -82,7 +82,7 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
                     if check_serializable(v):
                         clean_ev[k] = v
                     else:
-                        clean_ev[k] = str(v)  # Convert non-serializable objects to strings
+                        clean_ev[k] = str(v)  # Convert non-serializable objects to strings # TODO: Implement better serialization (quote problem?)
                 serializable_evidence.append(clean_ev)
             else:
                 serializable_evidence.append(str(ev))
@@ -99,18 +99,19 @@ def process_personal_statement(input_pdf_path, continue_from=None, checkpoint_di
             step3_state = json.load(f)
             evidence = step3_state["evidence"]
 
-    # Step 4: Validate and rank evidence
-    if not os.path.exists(os.path.join(output_dir, "step4_validate_state.json")):
-        validated_evidence = validate_and_rank_evidence(evidence)
-        step4_state = {"validated_evidence": validated_evidence}
-        save_state(step4_state, output_dir, "step4_validate")
-        if not validated_evidence:
-            raise Exception("No validated evidence found")
-    else:
-        print(f"Resuming from step 4: {output_dir}")
-        with open(os.path.join(output_dir, "step4_validate_state.json"), "r") as f:
-            step4_state = json.load(f)
-            validated_evidence = step4_state["validated_evidence"]
+    # TODO: Implement once there is significant (10s, 100s) of evidence to rerank. For now, keep all evidence and use in context to generate report (emphasize synthesis in prompt).
+    # # Step 4: Validate and rank evidence
+    # if not os.path.exists(os.path.join(output_dir, "step4_validate_state.json")):
+    #     validated_evidence = validate_and_rank_evidence(evidence)
+    #     step4_state = {"validated_evidence": validated_evidence}
+    #     save_state(step4_state, output_dir, "step4_validate")
+    #     if not validated_evidence:
+    #         raise Exception("No validated evidence found")
+    # else:
+    #     print(f"Resuming from step 4: {output_dir}")
+    #     with open(os.path.join(output_dir, "step4_validate_state.json"), "r") as f:
+    #         step4_state = json.load(f)
+    #         validated_evidence = step4_state["validated_evidence"]
 
     # Step 5: Generate report text
     if not os.path.exists(os.path.join(output_dir, "step5_report_state.json")):
